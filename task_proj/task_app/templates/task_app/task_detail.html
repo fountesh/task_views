@@ -1,0 +1,38 @@
+{% extends 'task_app/base.html' %}
+{% block title %}Task Detail{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <h1 id="task-details" class="mb-4">Task Details</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 id="task-name" class="card-title">{{ task.name }}</h5>
+
+                <div class="mb-4">
+                    {{ task.description }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Task Information</h4>
+                        <ul>
+                            <li><strong>Status:</strong> <span class="badge {% if task.status == 'done' %}bg-success{% else %}bg-warning{% endif %}">{{ task.get_status_display }}</span></li>
+                            <li><strong>Priority:</strong> <span class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'mid' %}bg-warning{% else %}bg-info{% endif %}">{{ task.get_priority_display }}</span></li>
+                            <li><strong>Deadline:</strong> {{ task.deadline|date:"F j, Y, g:i a" }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="#" class="btn btn-primary me-2">Edit</a>
+                    <a href="#" class="btn btn-danger me-2">Delete</a>
+                    <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

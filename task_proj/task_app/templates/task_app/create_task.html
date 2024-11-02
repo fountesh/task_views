@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Створити завдання</title>
+</head>
+<body>
+    <h2>Створити нове завдання</h2>
+    <form method="post" action="{% url 'create_task' %}">
+        {% csrf_token %}
+        <label for="name">Назва:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Опис:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <button type="submit">Створити</button>
+    </form>
+
+    {% if form.errors %}
+        <div class="errors">
+            <p>Будь ласка, виправте помилки:</p>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</body>
+</html>
