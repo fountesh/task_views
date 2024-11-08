@@ -1,18 +1,18 @@
+# forms.py
 from django import forms
 
 class TaskFilterForm(forms.Form):
     STATUS_CHOICES = [
         ('', 'All Statuses'),
-        ('todo', 'To Do'),
         ('in_progress', 'In Progress'),
-        ('done', 'Done'),
+        ('done', 'Done')
     ]
     
     PRIORITY_CHOICES = [
         ('', 'All Priorities'),
-        ('high', 'High'),
-        ('mid', 'Medium'),
         ('low', 'Low'),
+        ('mid', 'Mid'),
+        ('high', 'High')
     ]
     
     status = forms.ChoiceField(

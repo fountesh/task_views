@@ -4,28 +4,45 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixin import UserIsOwnerMixin
 from .models import Task
+from .forms import TaskFilterForm
 
 # Create your views here.
 
-class TaskList(ListView):
-    model= Task
-    template_name = "task_proj/task_app/templates/task_app/task_list.html"
+class TaskList(LoginRequiredMixin, ListView):
+    model = Task
+    template_name = "task_app/task_list.html"
     context_object_name = "tasks"
+    login_url = "/login/"
+    paginate_by = 6
 
     def get_queryset(self):
-        queryset = Task.objects.all()
+        # Спочатку фільтруємо за поточним користувачем
+        queryset = Task.objects.filter(user=self.request.user)
         
         # Отримуємо параметри фільтрації
         status = self.request.GET.get('status')
         priority = self.request.GET.get('priority')
         
-        # Застосовуємо фільтри
+        # Застосовуємо фільтри тільки якщо вибрано конкретні значення
         if status:
             queryset = queryset.filter(status=status)
         if priority:
             queryset = queryset.filter(priority=priority)
             
+        # Додаємо сортування для уникнення UnorderedObjectListWarning
+        queryset = queryset.order_by('-priority')  # або інше поле
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TaskFilterForm(self.request.GET or None)
+        return context
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TaskFilterForm(self.request.GET or None)
+        return context
 
 class TaskDetail(DetailView):
     model = Task
