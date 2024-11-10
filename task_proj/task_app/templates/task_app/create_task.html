@@ -1,33 +1,79 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ua">
 <head>
     <meta charset="UTF-8">
-    <title>Створити завдання</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DateTimePicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
-    <h2>Створити нове завдання</h2>
-    <form method="post" action="{% url 'create_task' %}">
-        {% csrf_token %}
-        <label for="name">Назва:</label>
-        <input type="text" id="name" name="name" required>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Create New Task</h1>
 
-        <label for="description">Опис:</label>
-        <textarea id="description" name="description" required></textarea>
-
-        <button type="submit">Створити</button>
-    </form>
-
-    {% if form.errors %}
-        <div class="errors">
-            <p>Будь ласка, виправте помилки:</p>
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                {% csrf_token %}
+                                <label for="name" class="form-label">Name:</label>
+                                <input type="text" class="form-control" id="name" name="name" required maxlength="50">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description:</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="status" class="form-label">Status:</label>
+                                    <select class="form-select" id="status" name="status" required>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="done">Done</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="priority" class="form-label">Priority:</label>
+                                    <select class="form-select" id="priority" name="priority" required>
+                                        <option value="low">Low</option>
+                                        <option value="mid">Mid</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="deadline" class="form-label">Deadline:</label>
+                                    <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary me-2">Create Task</button>
+                                <a href="tasks.html" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endif %}
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Flatpickr for better datetime picker -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Initialize datetime picker
+        flatpickr("#deadline", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today"
+        });
+    </script>
 </body>
 </html>

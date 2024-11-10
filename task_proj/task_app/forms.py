@@ -1,5 +1,6 @@
 # forms.py
 from django import forms
+from .models import Comment
 
 class TaskFilterForm(forms.Form):
     STATUS_CHOICES = [
@@ -26,3 +27,8 @@ class TaskFilterForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+
+class CommentsForm(forms.Form):
+    class Meta:
+        model = Comment
+        field = ['content']

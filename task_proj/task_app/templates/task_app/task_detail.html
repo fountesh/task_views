@@ -26,7 +26,6 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="#" class="btn btn-primary me-2">Edit</a>
                     <a href="#" class="btn btn-danger me-2">Delete</a>
                     <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to List</a>
                 </div>
@@ -34,5 +33,31 @@
         </div>
     </div>
 </div>
+    <!-- Comments Section -->
+<div class="card mt-4">
+    <div class="card-body">
+        <h4 class="mb-3" id="comments-section">Comments</h4>
+
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="comment-block mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between">
+                    <div class="comment-author fw-bold">
+                        {{ comment.author }}
+                    </div>
+                    <div class="comment-date text-muted">
+                        {{ comment.created_at|date:"F j, Y, g:i a" }}
+                    </div>
+                </div>
+                <div class="comment-content mt-2">
+                    {{ comment.text }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                No comments yet.
+            </div>
+        {% endif %}
 
 {% endblock %}

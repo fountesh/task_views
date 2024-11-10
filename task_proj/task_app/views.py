@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixin import UserIsOwnerMixin
-from .models import Task
-from .forms import TaskFilterForm
+from .models import Task, Comment
+from .forms import TaskFilterForm, CommentsForm
 
 # Create your views here.
 
@@ -48,10 +48,17 @@ class TaskDetail(DetailView):
     model = Task
     template_name = "task_app/task_detail.html"
     context_object_name = "task"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = Comment.objects.all()
+        context['comment_form'] = CommentsForm
+
+        return context
 
 class CreateTask(LoginRequiredMixin, CreateView):
     model = Task
-    fields = ['name', 'description']
+    fields = ['name', 'description', 'status', 'priority', 'deadline']
     template_name = "task_app/create_task.html"
     login_url = "/login/"
     success_url = "/"
@@ -66,6 +73,11 @@ class DeleteTask(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
     login_url = "/login/"
     success_url = "/"
     template_name = "task_app/delete_confirm.html"
+
+class DeleteComment(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
+    model = Comment
+    login_url = "/login/"
+    success_url = "/"
 
 class UpdateTask(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     model = Task
