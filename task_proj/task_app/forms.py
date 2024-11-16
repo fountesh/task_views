@@ -28,7 +28,16 @@ class TaskFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
-class CommentsForm(forms.Form):
+class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        field = ['content']
+        fields = ['content']
+        labels = {'content': ''}
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                "cols": 50,
+                'placeholder': 'Type comment...'
+            })
+        }
