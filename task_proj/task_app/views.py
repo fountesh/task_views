@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .mixin import UserIsOwnerMixin
-from .models import Task
-from .forms import TaskFilterForm
+from django.urls import reverse_lazy
+from .mixin import UserIsOwnerMixin, UserIsCommentOwnerMixin
+from .models import Task, Comment
+from .forms import TaskFilterForm, CommentForm
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
@@ -48,10 +50,17 @@ class TaskDetail(DetailView):
     model = Task
     template_name = "task_app/task_detail.html"
     context_object_name = "task"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = Comment.objects.all()
+        context['comment_form'] = CommentForm
+
+        return context
 
 class CreateTask(LoginRequiredMixin, CreateView):
     model = Task
-    fields = ['name', 'description']
+    fields = ['name', 'description', 'status', 'priority', 'deadline']
     template_name = "task_app/create_task.html"
     login_url = "/login/"
     success_url = "/"
@@ -73,3 +82,58 @@ class UpdateTask(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     success_url = "/"
     template_name = "task_app/update_task.html"
 
+class CommentDelete(LoginRequiredMixin, UserIsCommentOwnerMixin, DeleteView):
+    model = Comment
+    template_name = 'task_app/delete_confirm.html'
+
+    def get_success_url(self):
+        return reverse_lazy('task_detail', kwargs={"pk": self.get_object().task.pk})
+
+
+class CommentUpdate(LoginRequiredMixin, UserIsCommentOwnerMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'task_app/comment_update.html'
+
+    def get_success_url(self):
+        return reverse_lazy('task_detail', kwargs={"pk": self.get_object().task.pk})
+
+
+class LikeView(LoginRequiredMixin, UpdateView):
+    model = Comment
+
+    def post(self, request, *args, **kwargs):
+        comment = self.get_object()
+
+        if comment.dislikes.filter(id=request.user.id).exists():
+            comment.dislikes.remove(request.user)
+
+        if comment.likes.filter(id=request.user.id).exists():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('task_detail', kwargs={'pk': self.get_object().task.pk})
+
+
+class DislikeView(LoginRequiredMixin, UpdateView):
+    model = Comment
+
+    def post(self, request, *args, **kwargs):
+        comment = self.get_object()
+
+        if comment.likes.filter(id=request.user.id).exists():
+            comment.likes.remove(request.user)
+
+        if comment.dislikes.filter(id=request.user.id).exists():
+            comment.dislikes.remove(request.user)
+        else:
+            comment.dislikes.add(request.user)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('task_detail', kwargs={'pk': self.get_object().task.pk})
