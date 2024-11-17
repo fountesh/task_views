@@ -1,0 +1,25 @@
+{% extends 'task_app/base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h1>{{ title }}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary">Зареєструватися</button>
+    </form>
+</div>
+{% endblock %}

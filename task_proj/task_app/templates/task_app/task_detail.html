@@ -13,7 +13,7 @@
                 <h5 id="task-name" class="card-title">{{ task.name }}</h5>
 
                 <div class="mb-4">
-                    {{ task.description }}
+                    <p><h6>Description:</h6> <span>{{ task.description }}</span></p>
                 </div>
 
                 <div class="row">
@@ -23,12 +23,23 @@
                             <li><strong>Status:</strong> <span class="badge {% if task.status == 'done' %}bg-success{% else %}bg-warning{% endif %}">{{ task.get_status_display }}</span></li>
                             <li><strong>Priority:</strong> <span class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'mid' %}bg-warning{% else %}bg-info{% endif %}">{{ task.get_priority_display }}</span></li>
                             <li><strong>Deadline:</strong> {{ task.deadline|date:"F j, Y, g:i a" }}</li>
+                            <li>
+                              <strong>Image:</strong>
+                              {% if task.image %}
+                                  <div class="mt-2">
+                                      <img src="{{ task.image.url }}" alt="{{ task.name }}" class="img-fluid rounded" style="max-height: 200px;">
+                                  </div>
+                              {% else %}
+                                  <span>No image available</span>
+                              {% endif %}
+                          </li>
+                          
                         </ul>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <a href="#" class="btn btn-danger me-2">Delete</a>
+                    <a href="{% url 'delete_task' task.pk %}" class="btn btn-danger me-2">Delete</a>
                     <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to List</a>
                 </div>
             </div>

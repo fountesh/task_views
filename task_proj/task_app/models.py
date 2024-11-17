@@ -17,6 +17,7 @@ class Task(models.Model):
         ('high', 'High')
     ])
     deadline = models.DateTimeField(default=timezone.now())
+    image = models.ImageField(upload_to="task_img/", blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -25,6 +26,7 @@ class Comment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
+    media = models.FileField(upload_to="com_media/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='post_likes')
     dislikes = models.ManyToManyField(User, related_name='post_dislikes')

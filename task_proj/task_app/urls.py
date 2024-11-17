@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import TaskList, TaskDetail, CreateTask, DeleteTask, UpdateTask, CommentDelete, CommentUpdate, LikeView, DislikeView
+from .views import TaskList, TaskDetail, CreateTask, DeleteTask, UpdateTask, CommentDelete, CommentUpdate, LikeView, DislikeView, RegisterUser
 
 urlpatterns = [
     path('', TaskList.as_view(), name='task_list'),
@@ -13,5 +13,6 @@ urlpatterns = [
     path('like/<int:pk>', LikeView.as_view(), name='like_comment'),
     path('dislike/<int:pk>', DislikeView.as_view(), name='dislike_comment'),
     path('login/', LoginView.as_view(template_name = "task_app/login.html"), name="login"),
-    path('logout/', LogoutView.as_view(template_name = "login"), name="logout")
+    path('logout/', LogoutView.as_view(template_name = "login"), name="logout"),
+    path('register/', RegisterUser.as_view(), name='register')
 ]
