@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from .mixin import UserIsOwnerMixin, UserIsCommentOwnerMixin
 from .models import Task, Comment
-from .forms import TaskFilterForm, CommentForm
+from .forms import TaskForm, TaskFilterForm, CommentForm
 from django.http import HttpResponseRedirect
 
 # Create your views here.
@@ -60,7 +61,7 @@ class TaskDetail(DetailView):
 
 class CreateTask(LoginRequiredMixin, CreateView):
     model = Task
-    fields = ['name', 'description', 'status', 'priority', 'deadline']
+    form_class = TaskForm
     template_name = "task_app/create_task.html"
     login_url = "/login/"
     success_url = "/"
@@ -78,7 +79,7 @@ class DeleteTask(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 
 class UpdateTask(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     model = Task
-    fields = ['name', 'description']
+    form_class = TaskForm
     success_url = "/"
     template_name = "task_app/update_task.html"
 
@@ -137,3 +138,17 @@ class DislikeView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('task_detail', kwargs={'pk': self.get_object().task.pk})
+
+class RegisterUser(CreateView):
+    template_name = "task_app/register.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')  
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Реєстрація'  
+        return context
